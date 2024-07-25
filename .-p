@@ -11,16 +11,8 @@ check_dir_exists() {
     fi
 }
 
-# Checks if either Xcode-beta.app or Xcode.app exists
-check_dir_xcode() {
-    if [ ! -d '/Applications/Xcode-beta.app' ] && [ ! -d '/Applications/Xcode.app' ]; then
-        echo "Please install Xcode-beta or Xcode"
-        exit 1
-    fi
-}
-
 if [ -z "$BARRIER_BUILD_ENV" ]; then
-	check_dir_xcode
+    check_dir_exists '/Applications/Xcode-beta.app' 'Xcode'
 
     printf "Modifying environment for Barrier build...\n"
 
