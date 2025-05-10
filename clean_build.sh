@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Detecta se é bash ou zsh e aplica compatibilidade
 if [ -n "$ZSH_VERSION" ]; then
@@ -8,6 +8,8 @@ elif [ -n "$BASH_VERSION" ]; then
 else
     SHELL_NAME="sh"
 fi
+
+B_BUILD_TYPE=Release
 
 # Vai para a raiz do script
 cd "$(dirname "$0")" || exit 1
