@@ -21,7 +21,7 @@ fi
 
 # Tipo de build (padrão: Debug)
 B_BUILD_TYPE=${B_BUILD_TYPE:-Debug}
-B_CMAKE_FLAGS="-DCMAKE_BUILD_TYPE=$B_BUILD_TYPE"
+B_CMAKE_FLAGS="-DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=$B_BUILD_TYPE"
 
 # Ajustes específicos para macOS
 if [ "$(uname)" = "Darwin" ]; then
