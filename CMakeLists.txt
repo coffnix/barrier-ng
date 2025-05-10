@@ -16,6 +16,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 cmake_minimum_required (VERSION 3.4)
+if(POLICY CMP0000)
+  cmake_policy(VERSION 3.4)
+endif()
 project (barrier C CXX)
 
 option (BARRIER_BUILD_GUI "Build the GUI" ON)
