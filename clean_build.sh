@@ -11,34 +11,41 @@ fi
 
 B_BUILD_TYPE=Release
 
-# Vai para a raiz do script
 cd "$(dirname "$0")" || exit 1
 
-# Detectar cmake
 if command -v cmake3 >/dev/null 2>&1; then
     B_CMAKE="cmake3"
 else
     B_CMAKE="cmake"
 fi
 
-# Tipo de build (padrão: Debug)
 B_BUILD_TYPE=${B_BUILD_TYPE:-Debug}
 B_CMAKE_FLAGS="-DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=$B_BUILD_TYPE"
 
-# Ajustes específicos para macOS
+# macOS ajustes
 if [ "$(uname)" = "Darwin" ]; then
-    # Detecta Qt5 do Homebrew
+    # Qt5 detectado via brew
     if [ -d /opt/homebrew/opt/qt@5 ]; then
         export PATH="/opt/homebrew/opt/qt@5/bin:$PATH"
         B_CMAKE_FLAGS="$B_CMAKE_FLAGS -DCMAKE_PREFIX_PATH=/opt/homebrew/opt/qt@5"
     fi
 
-    # SDK e compatibilidade com Xcode
+    # SDK correto
     SDK_PATH="$(xcrun --sdk macosx --show-sdk-path)"
-    B_CMAKE_FLAGS="$B_CMAKE_FLAGS -DCMAKE_OSX_SYSROOT=$SDK_PATH -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0"
+    B_CMAKE_FLAGS="$B_CMAKE_FLAGS -DCMAKE_OSX_SYSROOT=$SDK_PATH -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0"
+
+    # Usa Clang certo
+    export CC=$(xcrun --find clang)
+    export CXX=$(xcrun --find clang++)
+    
+    # Flags seguras
+    export CFLAGS="-O2 -pipe -mcpu=apple-m4 -ftree-vectorize -fomit-frame-pointer -moutline-atomics -falign-functions=32 -falign-loops=32"
+    export CXXFLAGS="$CFLAGS"
+    export LDFLAGS="-L/opt/homebrew/lib -Wl,-O2 -L/opt/homebrew/opt/libffi/lib"
+    export CPPFLAGS="-I/opt/homebrew/opt/libffi/include -I/opt/homebrew/opt/libomp/include"
 fi
 
-# Incluir configurações locais se existirem
+# Configuração local
 if [ -r ./build_env.sh ]; then
     case "$SHELL_NAME" in
         bash|zsh) . ./build_env.sh ;;
@@ -46,10 +53,8 @@ if [ -r ./build_env.sh ]; then
     esac
 fi
 
-# Garantir submódulos do Git
 git submodule update --init --recursive
 
-# Limpa e cria build
 rm -rf build
 mkdir build || exit 1
 cd build || exit 1
@@ -59,6 +64,6 @@ echo "🧰 Usando CMake: $B_CMAKE"
 echo "⚙️  Flags: $B_CMAKE_FLAGS"
 
 $B_CMAKE $B_CMAKE_FLAGS .. || exit 1
-make -j"$(sysctl -n hw.ncpu)" || exit 1
+make -j"$(sysctl -n hw.logicalcpu)" || exit 1
 
 echo "✅ Build concluído com sucesso."
