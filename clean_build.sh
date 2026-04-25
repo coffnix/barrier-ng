@@ -66,4 +66,23 @@ echo "⚙️  Flags: $B_CMAKE_FLAGS"
 $B_CMAKE $B_CMAKE_FLAGS .. || exit 1
 make -j"$(sysctl -n hw.logicalcpu)" || exit 1
 
+APP_PATH="./bundle/Barrier.app"
+DMG_PATH="./bundle/Barrier-2.4.0-release.dmg"
+
+echo "🔐 Assinando app: $APP_PATH"
+codesign --deep --force --verbose --sign - "$APP_PATH" || exit 1
+
+echo "✅ Validando assinatura..."
+codesign --verify --deep --strict --verbose=4 "$APP_PATH" || exit 1
+
+echo "🧹 Removendo DMG antigo..."
+rm -f "$DMG_PATH"
+
+echo "📦 Gerando DMG novamente..."
+make Barrier_MacOS || exit 1
+
+echo "✅ DMG gerado com app assinado"
+
 echo "✅ Build concluído com sucesso."
+
+
