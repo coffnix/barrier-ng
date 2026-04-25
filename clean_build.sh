@@ -69,7 +69,7 @@ make -j"$(sysctl -n hw.logicalcpu)" || exit 1
 APP_PATH="./bundle/Barrier.app"
 DMG_PATH="./bundle/Barrier-2.4.0-release.dmg"
 
-echo "🔐 Assinando app: $APP_PATH"
+echo "🔐 Assinando app final: $APP_PATH"
 codesign --deep --force --verbose --sign - "$APP_PATH" || exit 1
 
 echo "✅ Validando assinatura..."
@@ -78,11 +78,13 @@ codesign --verify --deep --strict --verbose=4 "$APP_PATH" || exit 1
 echo "🧹 Removendo DMG antigo..."
 rm -f "$DMG_PATH"
 
-echo "📦 Gerando DMG novamente..."
-make Barrier_MacOS || exit 1
+echo "📦 Gerando DMG final com app assinado..."
+hdiutil create \
+    -volname "Barrier" \
+    -srcfolder "$APP_PATH" \
+    -ov \
+    -format UDZO \
+    "$DMG_PATH" || exit 1
 
-echo "✅ DMG gerado com app assinado"
-
+echo "✅ DMG gerado com app assinado: $DMG_PATH"
 echo "✅ Build concluído com sucesso."
-
-
