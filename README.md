@@ -10,6 +10,31 @@ and a [snap](https://snapcraft.io/barrier).
 
 - `#barrier` on LiberaChat IRC network
 
+## Build on macOS
+```
+bash clean_build.sh
+```
+
+## Generate certificates
+
+### Linux (client)
+```
+cd ~/.local/share/barrier/SSL/
+openssl req -x509 -nodes -days 3650 -sha256 -subj /CN=Barrier -newkey rsa:4096 -keyout Barrier.pem -out Barrier.pem
+```
+
+### Windows (client)
+```
+cd %USERPROFILE%\AppData\Local\Barrier\SSL
+openssl req -x509 -nodes -days 3650 -sha256 -subj "/CN=Barrier" -newkey rsa:4096 -keyout Barrier.pem -out Barrier.pem
+```
+
+### MacOS (server)
+```
+cd ~/Library/Application\ Support/barrier/SSL
+openssl req -x509 -nodes -days 3650 -sha256 -subj "/C=BR/ST=MG/L=Belo Horizonte/O=vipnix/CN=Barrier" -newkey rsa:4096 -keyout Barrier.pem -out Barrier.pem
+```
+
 #### CI Build Status
 
 Master branch overall build status: [![Build Status](https://dev.azure.com/debauchee/Barrier/_apis/build/status/debauchee.barrier?branchName=master)](https://dev.azure.com/debauchee/Barrier/_build/latest?definitionId=1&branchName=master)
