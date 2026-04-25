@@ -32,7 +32,7 @@ if [ "$(uname)" = "Darwin" ]; then
 
     # SDK correto
     SDK_PATH="$(xcrun --sdk macosx --show-sdk-path)"
-    B_CMAKE_FLAGS="$B_CMAKE_FLAGS -DCMAKE_OSX_SYSROOT=$SDK_PATH -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0"
+    B_CMAKE_FLAGS="$B_CMAKE_FLAGS -DCMAKE_OSX_SYSROOT=$SDK_PATH -DCMAKE_OSX_DEPLOYMENT_TARGET=$(xcrun --show-sdk-version)"
 
     # Usa Clang certo
     export CC=$(xcrun --find clang)
